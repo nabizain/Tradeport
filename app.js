@@ -1,7 +1,7 @@
 import {DB} from './connect.js'
 import express from 'express';
 import bodyparser from 'body-parser';
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 const app = express();
 app.use(express.json());
 
