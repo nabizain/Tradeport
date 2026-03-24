@@ -83,7 +83,7 @@ app.get('/task-request/:id', (req, res) => {
 
 app.post('/InsertTaskRequest',(req, res) =>{
     res.set('content-type','application/json');
-    const sql = "INSERT INTO TaskRequest(Title, TaskType, Description, DriversRequired, CreatedBy) VALUES(?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO TaskType(Title, TaskType, Description, DriversRequired, CreatedBy) VALUES(?, ?, ?, ?, ?)";
     let newID;
     try {
         DB.run(sql, [req.body.title, req.body.taskType, req.body.description, req.body.driversRequired, req.body.createdBy], function(err){
@@ -99,6 +99,33 @@ app.post('/InsertTaskRequest',(req, res) =>{
         console.log(err.message);
         res.status(468);
         res.send(`{"status:"${err.message}}`);
+    }
+});
+
+app.get('/requests', (req, res) => {
+    res.set('Content-Type', 'application/json');
+
+    const sql = "SELECT * FROM TaskType";
+
+    try {
+        DB.all(sql, [], (err, rows) => {
+            if (err) throw err;
+
+            // Map DB rows to required format
+            const result = rows.map(row => ({
+                title: `${row.name} Job`,
+                task_type: row.name,
+                description: row.name,
+                drivers_required: 1 // default value (since not in table)
+            }));
+
+            res.status(200).send(JSON.stringify(result));
+        });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send(JSON.stringify({
+            error: err.message
+        }));
     }
 });
 
